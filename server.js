@@ -9,6 +9,7 @@ const callback = function(err) {
 };
 
 const fileName = 'kayne-james-314023.jpg';
+
 const generator = new Generator({
   original: fileName,
   result: 'image.png',
@@ -27,7 +28,6 @@ const generator = new Generator({
   },
   drawText: true,
   textOptions: {
-    size: 50,
     text: 'Everybody sooner or later has to drop the luggage and the baggage of illusions.',
   },
   drawCaption: true,

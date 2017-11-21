@@ -1,3 +1,5 @@
+import { DEFAULT_FONT_SIZE } from './constants';
+
 export const defaults = {
   src: './images',
   dist: './dist',
@@ -28,7 +30,7 @@ export const defaults = {
       path: './fonts/Pacifico-Regular.ttf',
       family: 'Pacifico-Regular',
     },
-    size: 14,
+    size: DEFAULT_FONT_SIZE,
     gravity: 'NorthWest',
     offsets: {
       x: 100,
@@ -47,7 +49,7 @@ export const defaults = {
       path: './fonts/BadScript-Regular.ttf',
       family: 'BadScript-Regular',
     },
-    size: 12,
+    size: DEFAULT_FONT_SIZE,
     gravity: 'SouthEast',
     offsets: {
       x: 100,
