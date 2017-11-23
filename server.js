@@ -23,7 +23,7 @@ const generator = new Generator({
     frameRatio: 0.075,
     stroke: {
       color: '#fff',
-      size: 2,
+      size: 3,
     },
   },
   drawText: true,
