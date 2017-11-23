@@ -27,11 +27,11 @@ export const defaults = {
     text: '',
     color: '#fff',
     font: {
-      path: './fonts/Pacifico-Regular.ttf',
-      family: 'Pacifico-Regular',
+      path: './fonts/KaushanScript-Regular.ttf',
+      family: 'KaushanScript-Regular',
     },
     size: DEFAULT_FONT_SIZE,
-    gravity: 'NorthWest',
+    gravity: 'Center',
     offsets: {
       x: 100,
       y: 200,
@@ -46,14 +46,14 @@ export const defaults = {
     caption: '',
     color: '#fff',
     font: {
-      path: './fonts/BadScript-Regular.ttf',
-      family: 'BadScript-Regular',
+      path: './fonts/Pacifico-Regular.ttf',
+      family: 'Pacigico-Regular',
     },
     size: DEFAULT_FONT_SIZE,
-    gravity: 'SouthEast',
+    gravity: 'South',
     offsets: {
       x: 100,
-      y: 100,
+      y: 75,
     },
     stroke: {
       color: 'transparent',

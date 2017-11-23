@@ -32,7 +32,7 @@ const generator = new Generator({
   },
   drawCaption: true,
   captionOptions: {
-    size: 30,
+    size: 36,
     caption: 'Carlos Santana',
   },
   effects: [{

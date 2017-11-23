@@ -19,7 +19,7 @@ class Generator {
   }
 
   generate() {
-    const text = this.getText();
+    const text = this.getFittedText();
     const image = this.getImage();
 
     if (this.options.resize) {
@@ -89,7 +89,7 @@ class Generator {
       .write(`${this.options.dist}/${this.options.result}`, this.options.cb);
   }
 
-  getText() {
+  getFittedText() {
     const canvas = createCanvas(4000, 4000);
     const ctx = canvas.getContext('2d');
     const [ frameWidth, frameHeight ] = this.getTextFrameSize();
@@ -107,10 +107,10 @@ class Generator {
 
         if (width >= frameWidth) {
           if (memo[memo.length - 1] !== ' ') {
-            const redundant = memo.substring(memo.length, memo.lastIndexOf(' '));
+            const extra = memo.substring(memo.length, memo.lastIndexOf(' '));
             memo = memo.substring(0, memo.lastIndexOf(' '))
             chunks.push(`${memo.trim()}\n`);
-            memo = redundant || '';
+            memo = extra || '';
           }
         }
       });
@@ -118,10 +118,9 @@ class Generator {
       let result = `${chunks.join('')}${memo.trim()}`;
       let actualHeight = ctx.measureText(result).actualBoundingBoxDescent;
 
-      if (actualHeight >= frameHeight) {
-        output = result;
-        break;
-      }
+      if (actualHeight >= frameHeight) break;
+
+      output = result;
 
       this.options.textOptions.size++;
     }
@@ -141,11 +140,31 @@ class Generator {
   }
 
   getTextFrameSize() {
-    const [ width , height ] = this.getRectangleSize();
-    return [
-      width - this.options.textOptions.offsets.x * 2,
-      height - this.options.textOptions.offsets.y * 2
-    ];
+    const [ rectangleWidth, rectangleHeight ] = this.getRectangleSize();
+    const [ captionWidth, captionHeight ] = this.getCaptionFrameSize();
+
+    let textWidth = rectangleWidth - this.options.textOptions.offsets.x * 2;
+    let textHeight = rectangleHeight - this.options.textOptions.offsets.y * 2;
+
+    if (this.options.drawCaption) {
+       textHeight -= (captionHeight + this.options.captionOptions.offsets.y / 2);
+    }
+
+    return [ textWidth, textHeight ];
+  }
+
+  getCaptionFrameSize() {
+    const canvas = createCanvas(1000, 1000);
+    const ctx = canvas.getContext('2d');
+
+    ctx.font = `${this.options.captionOptions.size}px ${this.options.captionOptions.font.family}"`;
+
+    const {
+      actualBoundingBoxRight,
+      actualBoundingBoxAscent,
+    } = ctx.measureText(this.options.captionOptions.caption);
+
+    return [ actualBoundingBoxRight, actualBoundingBoxAscent ];
   }
 
   getRectangleSize() {
@@ -155,7 +174,6 @@ class Generator {
 
   getRectangleCoords() {
     const { horizontal, vertical } = this.getFrameSize();
-
     const x0 = horizontal;
     const y0 = vertical;
     const x1 = this.options.resizeOptions.width - horizontal;
@@ -166,12 +184,24 @@ class Generator {
 
   getTextCoords() {
     const [ x0, y0 ] = this.getRectangleCoords();
-    return [ x0 + this.options.textOptions.offsets.x, y0 + this.options.textOptions.offsets.y ];
+    switch (this.options.textOptions.gravity) {
+      case 'Center':
+        return [0, 0];
+      case 'West':
+        return [x0 + this.options.textOptions.offsets.x, 0];
+      default:
+        return [ x0 + this.options.textOptions.offsets.x, y0 + this.options.textOptions.offsets.y ];
+    }
   }
 
   getCaptionCoords() {
     const [ x1, y1 ] = this.getRectangleCoords();
-    return [ x1 + this.options.captionOptions.offsets.x, y1 + this.options.captionOptions.offsets.y ];
+    switch (this.options.captionOptions.gravity) {
+      case 'South':
+        return [0, y1 + this.options.captionOptions.offsets.y];
+      default:
+        return [ x1 + this.options.captionOptions.offsets.x, y1 + this.options.captionOptions.offsets.y ];
+    }
   }
 }
 
