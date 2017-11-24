@@ -8,7 +8,7 @@ const callback = function(err) {
   console.log(this.outname + " created  ::  " + arguments[3]);
 };
 
-const fileName = 'kayne-james-314023.jpg';
+const fileName = 'ashim-d-silva-95249.jpg';
 
 const generator = new Generator({
   original: fileName,
