@@ -187,8 +187,8 @@ class Generator {
         }
       });
 
-      let result = `${chunks.join('')}${memo.trim()}`;
-      let actualHeight = ctx.measureText(result).actualBoundingBoxDescent;
+      const result = `${chunks.join('')}${memo.trim()}`;
+      const actualHeight = ctx.measureText(result).actualBoundingBoxDescent;
 
       if (actualHeight >= frameHeight) break;
 
