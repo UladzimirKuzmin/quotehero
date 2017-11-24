@@ -39,7 +39,7 @@ class Generator {
     }
 
     if (this.options.drawText) {
-      this.drawText(image);
+      this.drawText(image, text);
     }
 
     if (this.options.drawCaption) {
@@ -127,8 +127,9 @@ class Generator {
   /*
   * Draws a given text on the gm instance of image
   * @param {Object} image
+  * @param {String} text
   */
-  drawText(image) {
+  drawText(image, text) {
     image
       .gravity(this.options.textOptions.gravity)
       .stroke(
