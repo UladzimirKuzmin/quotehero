@@ -11,6 +11,8 @@ class Generator {
   */
   constructor(options) {
     this.options = _.merge(defaults, options);
+    this.image = this.getImage();
+    this.text = this.getFittedText();
   }
 
   /*
@@ -19,38 +21,39 @@ class Generator {
   generate() {
     this.registerFonts();
 
-    const image = this.getImage();
-    const text = this.getFittedText();
-
     if (this.options.resize) {
-      this.resize(image);
+      this.resize();
     }
 
     if (this.options.crop) {
-      this.crop(image);
+      this.crop();
     }
 
     if (!Object.is([], this.options.effects)) {
-      this.applyEffect(image);
+      this.applyEffect();
     }
 
     if (this.options.drawShape) {
-      this.drawShape(image);
+      this.drawShape();
     }
 
     if (this.options.drawText) {
-      this.drawText(image, text);
+      this.drawText();
     }
 
     if (this.options.drawCaption) {
-      this.drawCaption(image);
+      this.drawCaption();
+    }
+
+    if (this.options.drawDivider) {
+      this.drawDivider();
     }
 
     if (this.options.monochrome) {
-      image.monochrome();
+      this.image.monochrome();
     }
 
-    image
+    this.image
       .noProfile()
       .write(`${this.options.dist}/${this.options.result}`, this.options.cb);
   }
@@ -79,26 +82,26 @@ class Generator {
   * Invokes resize method on the gm instance of image
   * @param {Object} image
   */
-  resize(image) {
-    image.resize(this.options.resizeOptions.width, this.options.resizeOptions.height, '^');
+  resize() {
+    this.image.resize(this.options.resizeOptions.width, this.options.resizeOptions.height, '^');
   }
 
   /*
   * Invokes crop method on the gm instance of image
   * @param {Object} image
   */
-  crop(image) {
-    image.crop(this.options.resizeOptions.width, this.options.resizeOptions.height);
+  crop() {
+    this.image.crop(this.options.resizeOptions.width, this.options.resizeOptions.height);
   }
 
   /*
   * Applies a given filter method on the gm instance of image
   * @param {Object} image
   */
-  applyEffect(image) {
+  applyEffect() {
     this.options.effects.forEach(effect => {
       const args = Object.values(effect[Object.keys(effect)[0]]);
-      image[Object.keys(effect)[0]](...args);
+      this.image[Object.keys(effect)[0]](...args);
     });
   }
 
@@ -106,22 +109,28 @@ class Generator {
   * Draws a given shape on the gm instance of image
   * @param {Object} image
   */
-  drawShape(image) {
-    image
+  drawShape(coords) {
+    this.image
       .stroke(this.options.drawOptions.stroke.color, this.options.drawOptions.stroke.size)
       .fill(this.options.drawOptions.fill)
 
     switch (this.options.drawOptions.shape) {
       case 'line':
-        image.draw('line', ...this.options.drawOptions.coords); //[50, 50, 1030, 50]
+        this.image.draw('line', ...this.options.drawOptions.coords); //[50, 50, 1030, 50]
         break;
       case 'rectangle':
-        image.draw('rectangle', ...this.getRectangleCoords());
+        this.image.draw('rectangle', ...this.getFrameCoords());
         break;
       case 'polyline':
-        image.draw('polyline', ...this.options.drawOptions.coords); //[50, 50], [1030, 50], [1030, 1030], [50, 1030], [50, 50]
+        this.image.draw('polyline', ...this.options.drawOptions.coords); //[50, 50], [1030, 50], [1030, 1030], [50, 1030], [50, 50]
         break;
     }
+  }
+
+  drawDivider() {
+    this.image
+        .fill(this.options.dividerOptions.fill)
+        .draw('line', ...this.getTextCaptionDividerCoords());
   }
 
   /*
@@ -129,8 +138,8 @@ class Generator {
   * @param {Object} image
   * @param {String} text
   */
-  drawText(image, text) {
-    image
+  drawText() {
+    this.image
       .gravity(this.options.textOptions.gravity)
       .stroke(
         this.options.textOptions.stroke.color,
@@ -138,15 +147,15 @@ class Generator {
       )
       .fill(this.options.textOptions.color)
       .font(this.options.textOptions.font.path, this.options.textOptions.size)
-      .drawText(...this.getTextCoords(), text);
+      .drawText(...this.getTextCoords(), this.text);
   }
 
   /*
   * Draws a given caption on the gm instance of image
   * @param {Object} image
   */
-  drawCaption(image) {
-    image
+  drawCaption() {
+    this.image
       .gravity(this.options.captionOptions.gravity)
       .stroke(
         this.options.captionOptions.stroke.color,
@@ -197,6 +206,8 @@ class Generator {
       this.options.textOptions.size++;
     }
 
+    console.log(output);
+
     return output;
   }
 
@@ -240,11 +251,11 @@ class Generator {
     ctx.font = `${this.options.captionOptions.size}px ${this.options.captionOptions.font.family}"`;
 
     const {
-      actualBoundingBoxRight,
-      actualBoundingBoxAscent,
+      width,
+      emHeightAscent,
     } = ctx.measureText(this.options.captionOptions.caption);
 
-    return [ actualBoundingBoxRight, actualBoundingBoxAscent ];
+    return [ width, emHeightAscent ];
   }
 
   /*
@@ -252,7 +263,7 @@ class Generator {
   * @returns {Array}
   */
   getRectangleSize() {
-    const [ x0, y0, x1, y1 ] = this.getRectangleCoords();
+    const [ x0, y0, x1, y1 ] = this.getFrameCoords();
     return [ x1 - x0, y1 - y0 ];
   }
 
@@ -260,7 +271,7 @@ class Generator {
   * Calculates rectangle coords
   * @returns {Array}
   */
-  getRectangleCoords() {
+  getFrameCoords() {
     const { horizontal, vertical } = this.getFrameSize();
     const x0 = horizontal;
     const y0 = vertical;
@@ -275,7 +286,7 @@ class Generator {
   * @returns {Array}
   */
   getTextCoords() {
-    const [ x0, y0 ] = this.getRectangleCoords();
+    const [ x0, y0 ] = this.getFrameCoords();
     switch (this.options.textOptions.gravity) {
       case 'Center':
         return [0, 0];
@@ -291,12 +302,45 @@ class Generator {
   * @returns {Array}
   */
   getCaptionCoords() {
-    const [ x1, y1 ] = this.getRectangleCoords();
+    const [ x1, y1 ] = this.getFrameCoords();
     switch (this.options.captionOptions.gravity) {
       case 'South':
         return [0, y1 + this.options.captionOptions.offsets.y];
       default:
         return [ x1 + this.options.captionOptions.offsets.x, y1 + this.options.captionOptions.offsets.y ];
+    }
+  }
+
+  /*
+  * Calculates text and caption divider coords
+  * @returns {Array}
+  */
+  getTextCaptionDividerCoords() {
+    const [ x0, y0, x1, y1 ] = this.getFrameCoords();
+    const [ captionWidth, captionHeight ] = this.getCaptionFrameSize();
+    const [ coordX, coordY ] = this.getCaptionCoords();
+    const cy = y1 - coordY; // default vertical position
+    const defaultCoords = [ coordX, cy, x1 - this.options.captionOptions.offsets.x, cy ];
+
+    if (this.options.dividerOptions.stretch) {
+      return defaultCoords;
+    }
+
+    switch (this.options.captionOptions.gravity) {
+      case 'SouthEast':
+        const xse0 = x1 - this.options.captionOptions.offsets.x - captionWidth;
+        const xse1 = x1 - this.options.captionOptions.offsets.x;
+        return [ xse0, cy, xse1, cy ];
+      case 'SouthWest':
+        const xsw0 = coordX;
+        const xsw1 = coordX + captionWidth;
+        return [ xsw0, cy, xsw1, cy ];
+      case 'South':
+        const xc0 = (x1 - x0 - captionWidth / 2) / 2;
+        const xc1 = (x1 - captionWidth / 2) / 2 + captionWidth;
+        return [ xc0, cy, xc1, cy ];
+      default:
+        return defaultCoords;
     }
   }
 }

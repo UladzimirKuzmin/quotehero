@@ -60,6 +60,11 @@ export const defaults = {
       size: 0,
     },
   },
+  drawDivider: false,
+  dividerOptions: {
+    stretch: false,
+    fill: '#fff',
+  },
   effects: [],
   monochrome: false,
   callback: null,
