@@ -1,4 +1,3 @@
-import fs from 'fs';
 import gm from 'gm';
 import _ from 'lodash';
 
@@ -10,15 +9,14 @@ class Generator {
   * @param {Object} options
   */
   constructor(options) {
-    this.options = _.merge(defaults, options);
-    this.image = this.getImage();
-    this.text = this.getFittedText();
+    this.options = _.mergeWith({}, defaults, options);
   }
 
   /*
   * Generates image and saves it to the dist folder
   */
   generate() {
+    this.image = this.getImage();
     this.registerFonts();
 
     if (this.options.resize) {
@@ -38,7 +36,7 @@ class Generator {
     }
 
     if (this.options.drawText) {
-      this.drawText();
+      this.drawText(this.getFittedText(this.options.textOptions.text));
     }
 
     if (this.options.drawCaption) {
@@ -138,7 +136,7 @@ class Generator {
   * @param {Object} image
   * @param {String} text
   */
-  drawText() {
+  drawText(text) {
     this.image
       .gravity(this.options.textOptions.gravity)
       .stroke(
@@ -147,7 +145,7 @@ class Generator {
       )
       .fill(this.options.textOptions.color)
       .font(this.options.textOptions.font.path, this.options.textOptions.size)
-      .drawText(...this.getTextCoords(), this.text);
+      .drawText(...this.getTextCoords(), text);
   }
 
   /*
@@ -170,7 +168,7 @@ class Generator {
   * Fits text into a given text frame by resizing font size and adding '\n'
   * @returns {String} text
   */
-  getFittedText() {
+  getFittedText(text) {
     const canvas = createCanvas(4000, 4000);
     const ctx = canvas.getContext('2d');
     const [ frameWidth, frameHeight ] = this.getTextFrameSize();
@@ -182,17 +180,15 @@ class Generator {
       let chunks = [];
       ctx.font = `${this.options.textOptions.size}px ${this.options.textOptions.font.family}"`;
 
-      _.each(this.options.textOptions.text, char => {
+      _.each(text, char => {
         memo += char;
         const { width } = ctx.measureText(memo);
 
-        if (width >= frameWidth) {
-          if (memo[memo.length - 1] !== ' ') {
-            const extra = memo.substring(memo.length, memo.lastIndexOf(' '));
-            memo = memo.substring(0, memo.lastIndexOf(' '))
-            chunks.push(`${memo.trim()}\n`);
-            memo = extra || '';
-          }
+        if (width >= frameWidth && memo[memo.length - 1] !== ' ') {
+          const extra = memo.substring(memo.length, memo.lastIndexOf(' '));
+          memo = memo.substring(0, memo.lastIndexOf(' '))
+          chunks.push(`${memo.trim()}\n`);
+          memo = extra || '';
         }
       });
 
@@ -205,8 +201,6 @@ class Generator {
 
       this.options.textOptions.size++;
     }
-
-    console.log(output);
 
     return output;
   }

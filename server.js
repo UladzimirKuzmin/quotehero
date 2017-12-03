@@ -1,56 +1,35 @@
-import fs from 'fs';
 import path from 'path';
-import dotenv from 'dotenv';
+import { readdir } from 'fs';
+import { promisify } from 'util';
 import Generator from './app/generator';
+import options from './options';
 
-const config = dotenv.config().parsed;
+const readdirAsync = promisify(readdir);
 
 const callback = function(err) {
   if (err) return console.dir(arguments);
   console.log(this.outname + " created  ::  " + arguments[3]);
 };
 
-const files = fs.readdirSync(`${__dirname}/images`).filter(file => {
-  return path.extname(file) !== '';
-});
+const getImages = async () => {
+  const images = await readdirAsync(`${__dirname}/images`);
+  return Promise.all(images.filter(file => path.extname(file) !== ''));
+};
 
-// files.forEach(async (file, index) => {
-  new Generator({
-    original: files[2],
-    result: `image${2}${path.extname(files[2])}`,
-    resizeOptions: {
-      width: 1080,
-      height: 1080,
-    },
-    drawShape: true,
-    drawOptions: {
-      shape: 'rectangle',
-      frameRatio: 0.075,
-      fill: '#00000066',
-    },
-    drawText: true,
-    textOptions: {
-      font: {
-        path: './fonts/Aladin-Regular.ttf',
-        family: 'Aladin-Regular',
-      },
-      gravity: 'NorthWest',
-      text: 'Running through airports with pounds of luggage - that\'s a good workout.',
-    },
-    drawCaption: true,
-    captionOptions: {
-      size: 60,
-      font: {
-        path: './fonts/Qwigley-Regular.ttf',
-        family: 'Qwigley-Regular',
-      },
-      gravity: 'South',
-      caption: 'Rachel McAdams',
-    },
-    drawDivider: true,
-    effects: [{
-      blur: {radius: 2, sigma: 1},
-    }],
-    cb: callback,
-  }).generate();
-// });
+(async () => {
+  try {
+    const files = await getImages();
+    files.forEach((file, index) => {
+      ((file, index) => {
+        new Generator(Object.assign({}, options[index], {
+          id: `generator_${index + 1}`,
+          original: file,
+          result: `image${index}${path.extname(file)}`,
+          cb: callback,
+        })).generate();
+      })(file, index);
+    });
+  } catch (err) {
+    console.log(err);
+  };
+})();
