@@ -16,21 +16,21 @@ export default [
     drawText: true,
     textOptions: {
       font: {
-        path: './fonts/SedgwickAveDisplay-Regular.ttf',
-        family: 'SedgwickAveDisplay-Regular-Regular',
+        path: './fonts/Pacifico-Regular.ttf',
+        family: 'Pacifico-Regular',
       },
       gravity: 'NorthEast',
-      text: 'Whatever short test text',
+      text: 'Everybody sooner or later has to drop the luggage and the baggage of illusions.',
     },
     drawCaption: true,
     captionOptions: {
       size: 60,
       font: {
-        path: './fonts/Qwigley-Regular.ttf',
-        family: 'Qwigley-Regular',
+        path: './fonts/Pacifico-Regular.ttf',
+        family: 'Pacifico-Regular',
       },
       gravity: 'SouthEast',
-      caption: 'Test author 1',
+      caption: 'Carlos Santans',
     },
     drawDivider: true,
     effects: [{
@@ -51,11 +51,11 @@ export default [
     drawText: true,
     textOptions: {
       font: {
-        path: './fonts/SedgwickAveDisplay-Regular.ttf',
-        family: 'SedgwickAveDisplay-Regular-Regular',
+        path: './fonts/Akronim-Regular.ttf',
+        family: 'Akronim-Regular',
       },
       gravity: 'Center',
-      text: 'One more whatever short test text with dot in the end.',
+      text: 'Did you ever notice that the first piece of luggage on the carousel never belongs to anyone?',
     },
     drawCaption: true,
     captionOptions: {
@@ -65,7 +65,7 @@ export default [
         family: 'Qwigley-Regular',
       },
       gravity: 'South',
-      caption: 'Test author 2',
+      caption: 'Erma Bombeck',
     },
     drawDivider: true,
     effects: [{
@@ -86,8 +86,8 @@ export default [
     drawText: true,
     textOptions: {
       font: {
-        path: './fonts/SedgwickAveDisplay-Regular.ttf',
-        family: 'SedgwickAveDisplay-Regular-Regular',
+        path: './fonts/BungeeShade-Regular.ttf',
+        family: 'BungeeShade-Regular',
       },
       gravity: 'NorthWest',
       text: 'Running through airports with pounds of luggage - that\'s a good workout.',
