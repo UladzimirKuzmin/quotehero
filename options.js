@@ -101,5 +101,32 @@ export default [
     effects: [{
       blur: {radius: 2, sigma: 1},
     }],
+  },
+  {
+    drawShape: true,
+    drawOptions: {
+      shape: 'rectangle',
+      frameRatio: 0.075,
+      fill: '#00000088',
+    },
+    drawText: true,
+    textOptions: {
+      font: {
+        path: './fonts/Kavoon-Regular.ttf',
+        family: 'Kavoon-Regular',
+      },
+      gravity: 'Center',
+      text: 'Don\'t let your luggage define your travels, each life unravels differently.',
+    },
+    drawCaption: true,
+    captionOptions: {
+      size: 40,
+      font: {
+        path: './fonts/CevicheOne-Regular.ttf',
+        family: 'CevicheOne-Regular',
+      },
+      gravity: 'South',
+      caption: 'Shane L. Koyczan',
+    },
   }
 ];

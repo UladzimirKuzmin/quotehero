@@ -210,10 +210,10 @@ class Generator {
   * @returns {Object}
   */
   getFrameSize() {
-    const horizontal = this.options.resizeOptions.width * this.options.drawOptions.frameRatio;
-    const vertical = this.options.resizeOptions.height * this.options.drawOptions.frameRatio;
+    const offsetX = this.options.resizeOptions.width * this.options.drawOptions.frameRatio;
+    const offsetY = this.options.resizeOptions.height * this.options.drawOptions.frameRatio;
 
-    return { horizontal, vertical };
+    return { offsetX, offsetY };
   }
 
   /*
@@ -266,11 +266,11 @@ class Generator {
   * @returns {Array}
   */
   getFrameCoords() {
-    const { horizontal, vertical } = this.getFrameSize();
-    const x0 = horizontal;
-    const y0 = vertical;
-    const x1 = this.options.resizeOptions.width - horizontal;
-    const y1 = this.options.resizeOptions.height - vertical;
+    const { offsetX, offsetY } = this.getFrameSize();
+    const x0 = offsetX;
+    const y0 = offsetY;
+    const x1 = this.options.resizeOptions.width - x0;
+    const y1 = this.options.resizeOptions.height - y0;
 
     return [ x0, y0, x1, y1 ];
   }
@@ -284,6 +284,8 @@ class Generator {
     switch (this.options.textOptions.gravity) {
       case 'Center':
         return [0, 0];
+      case 'North':
+          return [0, y0 + this.options.textOptions.offsets.y];
       case 'West':
         return [x0 + this.options.textOptions.offsets.x, 0];
       default:
