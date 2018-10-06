@@ -1,6 +1,7 @@
 import path from 'path';
 import { readdir } from 'fs';
 import { promisify } from 'util';
+import { argv } from 'yargs';
 import Generator from './app/generator';
 import options from './options';
 
@@ -12,24 +13,28 @@ const onImageGenerated = function(err) {
 };
 
 const getImages = async () => {
-  const images = await readdirAsync(`${__dirname}/images`);
-  return Promise.all(images.filter(image => path.extname(image) !== ''));
+	try{
+		const images = await readdirAsync(argv.src);
+		return Promise.all(images.filter(image => path.extname(image) !== ''));
+	} catch(err) {
+		console.log(err);
+	}
 };
 
-(async () => {
-  try {
+const generateQuotes = async () => {
+	try {
     const images = await getImages();
     images.forEach((image, index) => {
-      ((image, index) => {
-        new Generator(Object.assign({}, options[index], {
-          id: `generator_${index + 1}`,
-          original: image,
-          result: `image${index}${path.extname(image)}`,
-          cb: onImageGenerated,
-        })).generate();
-      })(image, index);
+      new Generator(Object.assign({}, options[index], {
+				id: `generator_${index + 1}`,
+				original: image,
+				result: `image${index}${path.extname(image)}`,
+				cb: onImageGenerated,
+			})).generate();
     });
   } catch (err) {
     console.log(err);
   };
-})();
+};
+
+generateQuotes();
