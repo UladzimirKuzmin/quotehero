@@ -17,7 +17,8 @@ const getImages = async () => {
 		const images = await readdirAsync(argv.src);
 		return Promise.all(images.filter(image => path.extname(image) !== ''));
 	} catch(err) {
-		console.log(err);
+    console.log(err);
+    process.exit();
 	}
 };
 
