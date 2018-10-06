@@ -1,2 +1,2 @@
-# quotehero
-
+# Quotehero
+Picture quotes generator
