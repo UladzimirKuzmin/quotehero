@@ -64,6 +64,7 @@ export const defaults = {
   dividerOptions: {
     stretch: false,
     fill: '#fff',
+    type: 'line',
   },
   effects: [],
   monochrome: false,

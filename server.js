@@ -13,21 +13,21 @@ const callback = function(err) {
 
 const getImages = async () => {
   const images = await readdirAsync(`${__dirname}/images`);
-  return Promise.all(images.filter(file => path.extname(file) !== ''));
+  return Promise.all(images.filter(image => path.extname(image) !== ''));
 };
 
 (async () => {
   try {
-    const files = await getImages();
-    files.forEach((file, index) => {
-      ((file, index) => {
+    const images = await getImages();
+    images.forEach((image, index) => {
+      ((image, index) => {
         new Generator(Object.assign({}, options[index], {
           id: `generator_${index + 1}`,
-          original: file,
-          result: `image${index}${path.extname(file)}`,
+          original: image,
+          result: `image${index}${path.extname(image)}`,
           cb: callback,
         })).generate();
-      })(file, index);
+      })(image, index);
     });
   } catch (err) {
     console.log(err);

@@ -127,8 +127,8 @@ class Generator {
 
   drawDivider() {
     this.image
-        .fill(this.options.dividerOptions.fill)
-        .draw('line', ...this.getTextCaptionDividerCoords());
+      .fill(this.options.dividerOptions.fill)
+      .draw(this.options.dividerOptions.type, ...this.getTextCaptionDividerCoords());
   }
 
   /*
