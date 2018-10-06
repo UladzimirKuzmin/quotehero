@@ -1,28 +1,25 @@
 {
   "name": "quotehero",
   "version": "0.0.1",
-  "description": "Graphic quotes generator",
+  "description": "Picture quote generator",
   "main": "index.js",
   "author": "Vladimir Kuzmin",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "start": "node index.js"
   },
   "devDependencies": {
-    "babel-core": "^6.20.0",
-    "babel-eslint": "^7.1.1",
-    "babel-plugin-syntax-async-functions": "^6.13.0",
-    "babel-plugin-transform-async-to-generator": "^6.16.0",
-    "babel-plugin-transform-builtin-extend": "^1.1.0",
-    "babel-preset-es2015-node": "^6.1.1",
-    "babel-register": "^6.18.0",
-    "eslint": "^3.12.2"
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-transform-async-to-generator": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.6.1"
   },
   "dependencies": {
-    "canvas": "^2.0.0-alpha.6",
-    "dotenv": "^4.0.0",
-    "gm": "^1.23.0",
-    "lodash": "^4.17.4"
+    "canvas": "^2.0.0-alpha.17",
+    "dotenv": "^6.0.0",
+    "gm": "^1.23.1",
+    "lodash": "^4.17.11"
   }
 }

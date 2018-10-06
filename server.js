@@ -6,7 +6,7 @@ import options from './options';
 
 const readdirAsync = promisify(readdir);
 
-const callback = function(err) {
+const onImageGenerated = function(err) {
   if (err) return console.dir(arguments);
   console.log(this.outname + " created  ::  " + arguments[3]);
 };
@@ -25,7 +25,7 @@ const getImages = async () => {
           id: `generator_${index + 1}`,
           original: image,
           result: `image${index}${path.extname(image)}`,
-          cb: callback,
+          cb: onImageGenerated,
         })).generate();
       })(image, index);
     });

@@ -9,7 +9,7 @@ class Generator {
   * @param {Object} options
   */
   constructor(options) {
-    this.options = _.mergeWith({}, defaults, options);
+    this.options = _.mergeWith(defaults, options);
   }
 
   /*
