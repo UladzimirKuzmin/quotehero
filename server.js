@@ -13,7 +13,7 @@ const onImageGenerated = function(err) {
 };
 
 const getImages = async () => {
-	try{
+	try {
 		const images = await readdirAsync(argv.src);
 		return Promise.all(images.filter(image => path.extname(image) !== ''));
 	} catch(err) {
