@@ -5,7 +5,21 @@ import { argv } from 'yargs';
 import Generator from './app/generator';
 import options from './options';
 
-const readdirAsync = promisify(readdir);
+const readDirAsync = promisify(readdir);
+
+const errorHandler = err => {
+  console.log(err);
+  process.exit(1);
+}
+
+const initializeGenerator = (image, index=0) => {
+  return new Generator(Object.assign({}, options[index], {
+    id: `generator_${index + 1}`,
+    original: image,
+    result: `image${index + 1}${path.extname(image)}`,
+    cb: onImageGenerated,
+  }));
+}
 
 const onImageGenerated = function(err) {
   if (err) return console.dir(arguments);
@@ -14,28 +28,30 @@ const onImageGenerated = function(err) {
 
 const getImages = async () => {
 	try {
-		const images = await readdirAsync(argv.src);
+    const images = await readDirAsync(argv.src);
 		return Promise.all(images.filter(image => path.extname(image) !== ''));
 	} catch(err) {
-    console.log(err);
-    process.exit();
+    errorHandler(err);
 	}
+};
+
+const generateQuote = async () => {
+  try {
+    initializeGenerator(argv.filename).generate();
+  } catch(err) {
+    console.log(err);
+  }
 };
 
 const generateQuotes = async () => {
 	try {
     const images = await getImages();
     images.forEach((image, index) => {
-      new Generator(Object.assign({}, options[index], {
-				id: `generator_${index + 1}`,
-				original: image,
-				result: `image${index}${path.extname(image)}`,
-				cb: onImageGenerated,
-			})).generate();
+      initializeGenerator(image, index).generate();
     });
-  } catch (err) {
+  } catch(err) {
     console.log(err);
   };
 };
 
-generateQuotes();
+argv.filename ? generateQuote() : generateQuotes();

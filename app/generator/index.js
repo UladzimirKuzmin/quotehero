@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { createCanvas, registerFont } from 'canvas';
 import { defaults } from './config/defaults';
 
-class Generator {
+export default class Generator {
   /*
   * @param {Object} options
   */
@@ -340,5 +340,3 @@ class Generator {
     }
   }
 }
-
-export default Generator;
