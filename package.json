@@ -6,7 +6,7 @@
   "author": "Vladimir Kuzmin",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js --src='./images'"
+    "start": "node index.js"
   },
   "devDependencies": {
     "@babel/core": "^7.1.0",
