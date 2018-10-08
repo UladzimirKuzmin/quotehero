@@ -1,0 +1,17 @@
+{
+  "name": "quotehero-server",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "Vladimir Kuzmin",
+  "license": "MIT",
+  "scripts": {
+    "dev": "backpack dev",
+    "build": "backpack build"
+  },
+  "dependencies": {
+    "backpack-core": "^0.4.2",
+    "dotenv": "^4.0.0",
+    "koa": "^2.3.0",
+    "koa-morgan": "^1.0.1"
+  }
+}

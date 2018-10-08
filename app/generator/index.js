@@ -177,7 +177,9 @@ export default class Generator {
 
     while(true) {
       let memo = '';
+      let result = '';
       let chunks = [];
+      let actualHeight = 0;
       ctx.font = `${this.options.textOptions.size}px ${this.options.textOptions.font.family}"`;
 
       _.each(text, char => {
@@ -192,8 +194,8 @@ export default class Generator {
         }
       });
 
-      const result = `${chunks.join('')}${memo.trim()}`;
-      const actualHeight = ctx.measureText(result).actualBoundingBoxDescent;
+      result = `${chunks.join('')}${memo.trim()}`;
+      actualHeight = ctx.measureText(result).actualBoundingBoxDescent;
 
       if (actualHeight >= frameHeight) break;
 

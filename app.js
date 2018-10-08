@@ -32,7 +32,7 @@ const getImages = async (src='./images') => {
 	}
 };
 
-const generateQuote = async () => {
+export const generateQuote = async () => {
   try {
     initializeGenerator(argv.filename).generate();
   } catch(err) {
@@ -40,7 +40,7 @@ const generateQuote = async () => {
   }
 };
 
-const generateQuotes = async () => {
+export const generateQuotes = async () => {
 	try {
     const images = await getImages(argv.src);
     images.forEach((image, index) => {

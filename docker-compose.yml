@@ -1,0 +1,10 @@
+version: '0.1'
+
+services:
+  quotehero-server:
+    build: ./app/server/
+    volumes:
+      - ./app/server/src/:/usr/bin/server/src/
+    ports:
+      - "4444:8888" 
+      
