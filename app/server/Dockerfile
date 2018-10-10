@@ -8,6 +8,7 @@ RUN mkdir -p /usr/bin/server
 WORKDIR /usr/bin/server
 
 COPY package.json /usr/bin/server/
+COPY .babelrc /usr/bin/server/
 COPY src /usr/bin/server/
 
 VOLUME /usr/bin/server/src/

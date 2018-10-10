@@ -5,11 +5,16 @@
   "author": "Vladimir Kuzmin",
   "license": "MIT",
   "scripts": {
-    "dev": "backpack dev",
-    "build": "backpack build"
+    "dev": "nodemon ./src/index.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-transform-async-to-generator": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "nodemon": "^1.18.4"
   },
   "dependencies": {
-    "backpack-core": "^0.7.0",
     "dotenv": "^6.0.0",
     "koa": "^2.5.3",
     "koa-morgan": "^1.0.1"
