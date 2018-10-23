@@ -23,13 +23,13 @@ const onImageGenerated = function(err) {
 };
 
 const getImages = async (src='./images') => {
-	try {
+  try {
     const images = await readDirAsync(src);
-		return Promise.all(images.filter(image => path.extname(image) !== ''));
-	} catch(err) {
+      return Promise.all(images.filter(image => path.extname(image) !== ''));
+  } catch(err) {
     console.log(err);
     process.exit(1);
-	}
+  }
 };
 
 export const generateQuote = async () => {
@@ -41,7 +41,7 @@ export const generateQuote = async () => {
 };
 
 export const generateQuotes = async () => {
-	try {
+  try {
     const images = await getImages(argv.src);
     images.forEach((image, index) => {
       initializeGenerator(image, index, argv.src).generate();
