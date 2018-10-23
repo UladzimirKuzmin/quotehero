@@ -265,4 +265,39 @@ export default [
       caption: 'Cesare Pavese',
     },
   },
+  // Photo 9
+  {
+    drawShape: true,
+    drawOptions: {
+      shape: 'rectangle',
+      frameRatio: 0.075,
+      fill: '#00000055',
+      stroke: {
+        color: '#fff',
+        size: 2,
+      },
+    },
+    drawText: true,
+    textOptions: {
+      font: {
+        path: './fonts/Bangers-Regular.ttf',
+        family: 'Bangers-Regular',
+      },
+      gravity: 'Center',
+      text: 'Everyone has baggage, maybe we should help each other carry it.',
+    },
+    drawCaption: true,
+    captionOptions: {
+      size: 40,
+      font: {
+        path: './fonts/Pacifico-Regular.ttf',
+        family: 'Pacifico-Regular',
+      },
+      gravity: 'South',
+      caption: 'Rob Liano',
+    },
+    effects: [{
+      blur: {radius: 2, sigma: 1},
+    }],
+  },
 ];
