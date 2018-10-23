@@ -25,7 +25,7 @@ const onImageGenerated = function(err) {
 const getImages = async (src='./images') => {
   try {
     const images = await readDirAsync(src);
-      return Promise.all(images.filter(image => path.extname(image) !== ''));
+    return Promise.all(images.filter(image => path.extname(image) !== ''));
   } catch(err) {
     console.log(err);
     process.exit(1);
