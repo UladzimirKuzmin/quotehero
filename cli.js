@@ -1,11 +1,11 @@
 import path from 'path';
-import { readdir } from 'fs';
-import { promisify } from 'util';
 import { argv } from 'yargs';
-import Generator from './app/generator';
-import options from './options';
 
-const readDirAsync = promisify(readdir);
+import Generator from './app/generator';
+import { readOptions, getImages } from './utils'
+import { isArray } from 'util';
+
+const { filename, src, dist } = argv;
 
 /**
  * Initializes generator
@@ -18,50 +18,57 @@ const readDirAsync = promisify(readdir);
  * @returns {Object}
  */
 const initializeGenerator = (original, index=0, src='./images', dist='./dist') => {
-  return new Generator(Object.assign({}, options[index], {
+  const options = readOptions();
+
+  if (!options) {
+    return console.log('Please, provide options.json file');
+  }
+
+  return new Generator({
+    ...(
+      Array,isArray(options.data)
+        ? options.data[index]
+        : options.data
+    ),
     id: `generator_${index + 1}`,
     original,
     src,
     dist,
     result: `image${index + 1}${path.extname(original)}`,
-    cb: onImageGenerated,
-  }));
+    cb: function(err) {
+      if (err) return console.dir(arguments);
+      console.log(this.outname + ' created  ::  ' + arguments[3]);
+    },
+  });
 }
 
-const onImageGenerated = function(err) {
-  if (err) return console.dir(arguments);
-  console.log(this.outname + ' created  ::  ' + arguments[3]);
-};
-
-const getImages = async (src='./images') => {
-  try {
-    const images = await readDirAsync(src);
-    return Promise.all(images.filter(image => path.extname(image) !== ''));
-  } catch(err) {
-    console.log(err);
-    process.exit(1);
-  }
-};
-
+/**
+ * Generates one quote image
+ */
 export const generateQuote = async () => {
   try {
-    const { filename, src, dist } = argv
-    initializeGenerator(filename, undefined, src, dist).generate();
+    const generator = initializeGenerator(filename, undefined, src, dist) || {};
+    typeof generator.generate === 'function' && generator.generate()
   } catch(err) {
     console.log(err);
   }
 };
 
+/**
+ * Generates a bunch of quote images
+ */
 export const generateQuotes = async () => {
   try {
-    const { src, dist } = argv
     const images = await getImages(src);
     images.forEach((image, index) => {
-      initializeGenerator(image, index, src, dist).generate();
+      const generator = initializeGenerator(image, index, src, dist) || {};
+      typeof generator.generate === 'function' && generator.generate()
     });
   } catch(err) {
     console.log(err);
   };
 };
 
-argv.filename ? generateQuote() : generateQuotes();
+export const start = () => filename ? generateQuote() : generateQuotes();
+
+start();
