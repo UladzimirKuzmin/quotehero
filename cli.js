@@ -4,7 +4,7 @@ import { argv } from 'yargs';
 import Generator from './app/Generator';
 import { readOptions, getImages } from './utils'
 
-const { filename, src, dist, optsFileName, text, caption } = argv;
+const { filename, src, dist, opts, text, caption } = argv;
 
 /**
  * Initializes generator
@@ -16,7 +16,13 @@ const { filename, src, dist, optsFileName, text, caption } = argv;
  *
  * @returns {Object}
  */
-const initializeGenerator = (original, index=0, src='./images', dist='./dist') => {
+const initializeGenerator = (
+  original,
+  src='./images',
+  dist='./dist',
+  optsFileName='options',
+  index=0
+) => {
   const options = readOptions(optsFileName);
 
   if (!options) {
@@ -51,10 +57,15 @@ const initializeGenerator = (original, index=0, src='./images', dist='./dist') =
 
 /**
  * Generates one quote image
+ *
+ * @param {string} filename
+ * @param {string} src
+ * @param {string} dist
+ * @param {string} optsFileName
  */
-export const generateQuote = async () => {
+export const generateQuote = async (filename, src, dist, optsFileName) => {
   try {
-    const generator = initializeGenerator(filename, undefined, src, dist) || {};
+    const generator = initializeGenerator(filename, src, dist, optsFileName) || {};
     typeof generator.generate === 'function' && generator.generate();
   } catch(err) {
     console.log(err);
@@ -63,12 +74,16 @@ export const generateQuote = async () => {
 
 /**
  * Generates a bunch of quote images
+ * 
+ * @param {string} src
+ * @param {string} dist
+ * @param {string} optsFileName
  */
-export const generateQuotes = async () => {
+export const generateQuotes = async (src, dist, optsFileName) => {
   try {
     const images = await getImages(src);
     images.forEach((image, index) => {
-      const generator = initializeGenerator(image, index, src, dist) || {};
+      const generator = initializeGenerator(image, src, dist, optsFileName, index) || {};
       typeof generator.generate === 'function' && generator.generate();
     });
   } catch(err) {
@@ -76,6 +91,9 @@ export const generateQuotes = async () => {
   };
 };
 
-export const start = () => filename ? generateQuote() : generateQuotes();
+export const start = () =>
+  filename
+    ? generateQuote(filename, src, dist, opts)
+    : generateQuotes(src, dist, opts);
 
 start();
