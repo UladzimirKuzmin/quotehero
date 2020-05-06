@@ -63,7 +63,7 @@ const initializeGenerator = (
  * @param {string} dist
  * @param {string} optsFileName
  */
-export const generateQuote = async (filename, src, dist, optsFileName) => {
+export const generateQuote = (filename, src, dist, optsFileName) => {
   try {
     const generator = initializeGenerator(filename, src, dist, optsFileName) || {};
     typeof generator.generate === 'function' && generator.generate();
