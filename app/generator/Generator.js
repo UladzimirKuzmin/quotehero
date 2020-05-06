@@ -12,6 +12,7 @@ export default class Generator {
    */
   constructor(options) {
     this.options = _.mergeWith({}, defaults, options);
+    this.state = {}
   }
 
   /**
@@ -230,7 +231,6 @@ export default class Generator {
     const [ frameWidth, frameHeight ] = this.getTextPossibleFrameSize();
 
     let output = '';
-    let tempFontSize = fontSize
 
     while(true) {
       let memo = '';
@@ -238,7 +238,7 @@ export default class Generator {
       let chunks = [];
       let actualHeight = 0;
 
-      ctx.font = `${tempFontSize}px ${fontFamily}"`;
+      ctx.font = `${this.options.textOptions.size}px ${fontFamily}"`;
 
       _.each(text, char => {
         memo += char;
@@ -253,13 +253,14 @@ export default class Generator {
       });
 
       result = `${chunks.join('')}${memo.trim()}`;
+
       actualHeight = ctx.measureText(result).actualBoundingBoxDescent;
 
       if (actualHeight >= frameHeight) break;
 
       output = result;
 
-      tempFontSize++;
+      this.options.textOptions.size++;
     }
 
     return output;
@@ -276,11 +277,11 @@ export default class Generator {
       drawOptions: {
         frameRatio,
       } = {},
-      drawShape: {
+      resizeOptions: {
         width,
         height,
       } = {},
-     } = this.options;
+    } = this.options;
 
     const offsetX = drawShape ? width * frameRatio : 0;
     const offsetY = drawShape ? height * frameRatio : 0;
@@ -314,7 +315,7 @@ export default class Generator {
 
     const textWidth = rectangleWidth - x * 2;
     const textHeight = drawCaption
-      ? (rectangleHeight - y * 2) - (captionHeight - captionY / 2)
+      ? (rectangleHeight - y * 2) - (captionHeight + captionY / 2)
       : rectangleHeight - y * 2;
 
     return [ textWidth, textHeight ];
@@ -340,13 +341,16 @@ export default class Generator {
           x: offsetX,
           y: offsetY,
         },
+        breakLine,
         text,
       } = {},
     } = this.options;
 
-    const textWithLineBreaks = addLineBreak(text, { fontSize, fontFamily });
+    const updatedText = breakLine
+      ? addLineBreak(text, { fontSize, fontFamily })
+      : text;
 
-    return measureTextFrame(textWithLineBreaks, {
+    return measureTextFrame(updatedText, {
       resizeWidth,
       resizeHeight,
       fontSize,
@@ -376,13 +380,16 @@ export default class Generator {
           x: offsetX,
           y: offsetY,
         },
+        breakLine,
         caption,
       } = {},
     } = this.options;
 
-    const captionWithLineBreaks = addLineBreak(caption, { fontSize, fontFamily });
+    const updatedCaption = breakLine
+      ? addLineBreak(caption, { fontSize, fontFamily })
+      : caption;
 
-    return measureTextFrame(captionWithLineBreaks, {
+    return measureTextFrame(updatedCaption, {
       resizeWidth,
       resizeHeight,
       fontSize,
