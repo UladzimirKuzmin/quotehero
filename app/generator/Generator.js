@@ -1,7 +1,7 @@
-import gm from './node_modules/gm';
-import _ from './node_modules/lodash';
+import gm from 'gm';
+import _ from 'lodash';
+import { registerFont } from 'canvas';
 
-import { registerFont } from './node_modules/canvas';
 import { defaults } from './config/defaults';
 import { measureTextFrame, getCanvasCtx, addLineBreak } from './utils'
 
