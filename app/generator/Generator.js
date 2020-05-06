@@ -12,7 +12,6 @@ export default class Generator {
    */
   constructor(options) {
     this.options = _.mergeWith({}, defaults, options);
-    this.state = {}
   }
 
   /**
