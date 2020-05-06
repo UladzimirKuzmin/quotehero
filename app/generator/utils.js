@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import { createCanvas } from 'canvas';
+import _ from './node_modules/lodash';
+import { createCanvas } from './node_modules/canvas';
 
 /**
  * Prepares canvas ctx

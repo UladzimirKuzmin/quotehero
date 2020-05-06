@@ -1,9 +1,8 @@
 import path from 'path';
 import { argv } from 'yargs';
 
-import Generator from './app/generator';
+import Generator from './app/Generator';
 import { readOptions, getImages } from './utils'
-import { isArray } from 'util';
 
 const { filename, src, dist, opts } = argv;
 
@@ -48,7 +47,7 @@ const initializeGenerator = (original, index=0, src='./images', dist='./dist') =
 export const generateQuote = async () => {
   try {
     const generator = initializeGenerator(filename, undefined, src, dist) || {};
-    typeof generator.generate === 'function' && generator.generate()
+    typeof generator.generate === 'function' && generator.generate();
   } catch(err) {
     console.log(err);
   }
@@ -62,7 +61,7 @@ export const generateQuotes = async () => {
     const images = await getImages(src);
     images.forEach((image, index) => {
       const generator = initializeGenerator(image, index, src, dist) || {};
-      typeof generator.generate === 'function' && generator.generate()
+      typeof generator.generate === 'function' && generator.generate();
     });
   } catch(err) {
     console.log(err);
