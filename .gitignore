@@ -3,4 +3,5 @@ images
 dist
 .env
 yarn.lock
-*.json
+/*.json
+!package.json
