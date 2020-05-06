@@ -17,7 +17,6 @@ export const getImages = async (src='./images') => {
     return Promise.all(images.filter(image => path.extname(image) !== ''));
   } catch(err) {
     console.log(err);
-    process.exit(1);
   }
 };
 
