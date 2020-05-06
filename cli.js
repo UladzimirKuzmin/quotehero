@@ -5,7 +5,7 @@ import Generator from './app/generator';
 import { readOptions, getImages } from './utils'
 import { isArray } from 'util';
 
-const { filename, src, dist } = argv;
+const { filename, src, dist, opts } = argv;
 
 /**
  * Initializes generator
@@ -18,7 +18,7 @@ const { filename, src, dist } = argv;
  * @returns {Object}
  */
 const initializeGenerator = (original, index=0, src='./images', dist='./dist') => {
-  const options = readOptions();
+  const options = readOptions(opts);
 
   if (!options) {
     return console.log('Please, provide options.json file');
@@ -26,7 +26,7 @@ const initializeGenerator = (original, index=0, src='./images', dist='./dist') =
 
   return new Generator({
     ...(
-      Array,isArray(options.data)
+      Array.isArray(options.data)
         ? options.data[index]
         : options.data
     ),

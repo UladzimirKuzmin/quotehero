@@ -1,6 +1,6 @@
 node_modules
 images
 dist
-pictures
 .env
 yarn.lock
+*.json

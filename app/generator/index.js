@@ -1,21 +1,38 @@
 import gm from 'gm';
 import _ from 'lodash';
 
-import { createCanvas, registerFont } from 'canvas';
+import { registerFont } from 'canvas';
 import { defaults } from './config/defaults';
+import { measureTextFrame, getCanvasCtx, addLineBreak } from './utils'
 
 export default class Generator {
-  /*
-  * @param {Object} options
-  */
+
+  /**
+   * @constructor
+   */
   constructor(options) {
     this.options = _.mergeWith({}, defaults, options);
   }
 
-  /*
-  * Generates image and saves it to the dist folder
-  */
+  /**
+   * Generates image and saves it to the dist folder
+   */
   generate() {
+    const {
+      textOptions: {
+        size: textFontSize,
+        font: {
+          textFontFamily,
+        } = {}
+      } = {},
+      captionOptions: {
+        size: captionFontSize,
+        font: {
+          captionFontFamily,
+        } = {}
+      } = {},
+    } = this.options;
+
     this.image = this.getImage();
     this.registerFonts();
 
@@ -36,11 +53,19 @@ export default class Generator {
     }
 
     if (this.options.drawText) {
-      this.drawText(this.getFittedText(this.options.textOptions.text));
+      // this.drawText(this.getFittedText(this.options.textOptions.text));
+      this.drawText(addLineBreak(this.options.textOptions.text, {
+        fontSize: textFontSize,
+        fontFamily: textFontFamily,
+      }));
     }
 
     if (this.options.drawCaption) {
-      this.drawCaption();
+      // this.drawCaption(this.options.captionOptions.caption);
+      this.drawCaption(addLineBreak(this.options.captionOptions.caption, {
+        fontSize: captionFontSize,
+        fontFamily: captionFontFamily,
+      }));
     }
 
     if (this.options.drawDivider) {
@@ -56,9 +81,9 @@ export default class Generator {
       .write(`${this.options.dist}/${this.options.result}`, this.options.cb);
   }
 
-  /*
-  * Register fonts for using in canvas
-  */
+  /**
+   * Register fonts for using in canvas
+   */
   registerFonts() {
     registerFont(this.options.textOptions.font.path, {
       family: this.options.textOptions.font.family
@@ -69,33 +94,36 @@ export default class Generator {
     });
   }
 
-  /*
-  * @returns GM instance of original image
-  */
+  /**
+   * @returns GM instance of original image
+   */
   getImage() {
     return gm(`${this.options.src}/${this.options.original}`);
   }
 
-  /*
-  * Invokes resize method on the gm instance of image
-  * @param {Object} image
-  */
+  /**
+   * Invokes resize method on the gm instance of image
+   *
+   * @param {Object} image
+   */
   resize() {
     this.image.resize(this.options.resizeOptions.width, this.options.resizeOptions.height, '^');
   }
 
-  /*
-  * Invokes crop method on the gm instance of image
-  * @param {Object} image
-  */
+  /**
+   * Invokes crop method on the gm instance of image
+   *
+   * @param {Object} image
+   */
   crop() {
     this.image.crop(this.options.resizeOptions.width, this.options.resizeOptions.height);
   }
 
-  /*
-  * Applies a given filter method on the gm instance of image
-  * @param {Object} image
-  */
+  /**
+   * Applies a given filter method on the gm instance of image
+   *
+   * @param {Object} image
+   */
   applyEffect() {
     this.options.effects.forEach(effect => {
       const args = Object.values(effect[Object.keys(effect)[0]]);
@@ -103,10 +131,11 @@ export default class Generator {
     });
   }
 
-  /*
-  * Draws a given shape on the gm instance of image
-  * @param {Object} image
-  */
+  /**
+   * Draws a given shape on the gm instance of image
+   *
+   * @param {Object} image
+   */
   drawShape(coords) {
     this.image
       .stroke(this.options.drawOptions.stroke.color, this.options.drawOptions.stroke.size)
@@ -125,17 +154,20 @@ export default class Generator {
     }
   }
 
+  /**
+   * Draws divider line
+   */
   drawDivider() {
     this.image
       .fill(this.options.dividerOptions.fill)
       .draw(this.options.dividerOptions.type, ...this.getTextCaptionDividerCoords());
   }
 
-  /*
-  * Draws a given text on the gm instance of image
-  * @param {Object} image
-  * @param {String} text
-  */
+  /**
+   * Draws a given text on the gm instance of image
+   *
+   * @param {String} text
+   */
   drawText(text) {
     this.image
       .gravity(this.options.textOptions.gravity)
@@ -148,11 +180,12 @@ export default class Generator {
       .drawText(...this.getTextCoords(), text);
   }
 
-  /*
-  * Draws a given caption on the gm instance of image
-  * @param {Object} image
-  */
-  drawCaption() {
+  /**
+   * Draws a given caption on the gm instance of image
+   *
+   * @param {string} caption
+   */
+  drawCaption(caption) {
     this.image
       .gravity(this.options.captionOptions.gravity)
       .stroke(
@@ -161,26 +194,45 @@ export default class Generator {
       )
       .fill(this.options.captionOptions.color)
       .font(this.options.captionOptions.font.path, this.options.captionOptions.size)
-      .drawText(...this.getCaptionCoords(), this.options.captionOptions.caption);
+      .drawText(...this.getCaptionCoords(), caption);
   }
 
-  /*
-  * Fits text into a given text frame by resizing font size and adding '\n'
-  * @returns {String} text
-  */
+  /**
+   * Fits text into a given text frame by resizing font size and adding '\n'
+   *
+   * @param {string} text
+   *
+   * @returns {string}
+   */
   getFittedText(text) {
-    const canvas = createCanvas(4000, 4000);
-    const ctx = canvas.getContext('2d');
-    const [ frameWidth, frameHeight ] = this.getTextFrameSize();
+    const {
+      textOptions: {
+        size: fontSize,
+        font: {
+          family: fontFamily,
+        } = {},
+      } = {},
+    } = this.options;
+
+    const ctx = getCanvasCtx({
+      resizeWidth: 4000,
+      resizeHeight: 4000,
+      fontSize,
+      fontFamily,
+    })
+
+    const [ frameWidth, frameHeight ] = this.getTextPossibleFrameSize();
 
     let output = '';
+    let tempFontSize = fontSize
 
     while(true) {
       let memo = '';
       let result = '';
       let chunks = [];
       let actualHeight = 0;
-      ctx.font = `${this.options.textOptions.size}px ${this.options.textOptions.font.family}"`;
+
+      ctx.font = `${tempFontSize}px ${fontFamily}"`;
 
       _.each(text, char => {
         memo += char;
@@ -201,118 +253,237 @@ export default class Generator {
 
       output = result;
 
-      this.options.textOptions.size++;
+      tempFontSize++;
     }
 
     return output;
   }
 
-  /*
-  * Calculates frame size
-  * @returns {Object}
-  */
+  /**
+   * Calculates frame size
+   *
+   * @returns {Object}
+   */
   getFrameSize() {
-    const offsetX = this.options.resizeOptions.width * this.options.drawOptions.frameRatio;
-    const offsetY = this.options.resizeOptions.height * this.options.drawOptions.frameRatio;
+    const {
+      drawShape,
+      drawOptions: {
+        frameRatio,
+      } = {},
+      drawShape: {
+        width,
+        height,
+      } = {},
+     } = this.options;
+
+    const offsetX = drawShape ? width * frameRatio : 0;
+    const offsetY = drawShape ? height * frameRatio : 0;
 
     return { offsetX, offsetY };
   }
 
-  /*
-  * Calculates text size
-  * @returns {Array}
-  */
-  getTextFrameSize() {
+  /**
+   * Calculates text possible frame size
+   *
+   * @returns {Array}
+   */
+  getTextPossibleFrameSize() {
+    const {
+      textOptions: {
+        offsets: {
+          x,
+          y,
+        },
+      } = {},
+      drawCaption,
+      captionOptions: {
+        offsets: {
+          y: captionY,
+        }
+      } = {},
+     } = this.options;
+
     const [ rectangleWidth, rectangleHeight ] = this.getRectangleSize();
     const [ captionWidth, captionHeight ] = this.getCaptionFrameSize();
 
-    let textWidth = rectangleWidth - this.options.textOptions.offsets.x * 2;
-    let textHeight = rectangleHeight - this.options.textOptions.offsets.y * 2;
-
-    if (this.options.drawCaption) {
-       textHeight -= (captionHeight + this.options.captionOptions.offsets.y / 2);
-    }
+    const textWidth = rectangleWidth - x * 2;
+    const textHeight = drawCaption
+      ? (rectangleHeight - y * 2) - (captionHeight - captionY / 2)
+      : rectangleHeight - y * 2;
 
     return [ textWidth, textHeight ];
   }
 
-  /*
-  * Calculates caption size
-  * @returns {Array}
-  */
-  getCaptionFrameSize() {
-    const canvas = createCanvas(1000, 1000);
-    const ctx = canvas.getContext('2d');
-
-    ctx.font = `${this.options.captionOptions.size}px ${this.options.captionOptions.font.family}"`;
-
+  /**
+   * Calculates text frame size
+   *
+   * @returns {Array}
+   */
+  getTextFrameSize() {
     const {
-      width,
-      emHeightAscent,
-    } = ctx.measureText(this.options.captionOptions.caption);
+      resizeOptions: {
+        width: resizeWidth,
+        height: resizeHeight,
+      },
+      textOptions: {
+        size: fontSize,
+        font: {
+          family: fontFamily,
+        } = {},
+        offsets: {
+          x: offsetX,
+          y: offsetY,
+        },
+        text,
+      } = {},
+    } = this.options;
 
-    return [ width, emHeightAscent ];
+    const textWithLineBreaks = addLineBreak(text, { fontSize, fontFamily });
+
+    return measureTextFrame(textWithLineBreaks, {
+      resizeWidth,
+      resizeHeight,
+      fontSize,
+      fontFamily,
+      offsetX,
+      offsetY,
+    });
   }
 
-  /*
-  * Calculates rectangle size
-  * @returns {Array}
-  */
+  /**
+   * Calculates caption frame size
+   *
+   * @returns {Array}
+   */
+  getCaptionFrameSize() {
+    const {
+      resizeOptions: {
+        width: resizeWidth,
+        height: resizeHeight,
+      },
+      captionOptions: {
+        size: fontSize,
+        font: {
+          family: fontFamily,
+        } = {},
+        offsets: {
+          x: offsetX,
+          y: offsetY,
+        },
+        caption,
+      } = {},
+    } = this.options;
+
+    const captionWithLineBreaks = addLineBreak(caption, { fontSize, fontFamily });
+
+    return measureTextFrame(captionWithLineBreaks, {
+      resizeWidth,
+      resizeHeight,
+      fontSize,
+      fontFamily,
+      offsetX,
+      offsetY,
+    });
+  }
+
+  /**
+   * Calculates rectangle size
+   *
+   * @returns {Array}
+   */
   getRectangleSize() {
     const [ x0, y0, x1, y1 ] = this.getFrameCoords();
     return [ x1 - x0, y1 - y0 ];
   }
 
-  /*
-  * Calculates rectangle coords
-  * @returns {Array}
-  */
+  /**
+   * Calculates rectangle coords
+   *
+   * @returns {Array}
+   */
   getFrameCoords() {
-    const { offsetX, offsetY } = this.getFrameSize();
+    const {
+      resizeOptions: {
+        width,
+        height,
+      } = {},
+    } = this.options;
+
+    const {
+      offsetX,
+      offsetY,
+    } = this.getFrameSize();
+
     const x0 = offsetX;
     const y0 = offsetY;
-    const x1 = this.options.resizeOptions.width - x0;
-    const y1 = this.options.resizeOptions.height - y0;
+    const x1 = width - x0;
+    const y1 = height - y0;
 
     return [ x0, y0, x1, y1 ];
   }
 
-  /*
-  * Calculates text coords
-  * @returns {Array}
-  */
+  /**
+   * Calculates text coords
+   *
+   * @returns {Array}
+   */
   getTextCoords() {
+    const {
+      textOptions: {
+        gravity,
+        offsets: {
+          x,
+          y,
+        } = {},
+      } = {},
+    } = this.options;
+
     const [ x0, y0 ] = this.getFrameCoords();
-    switch (this.options.textOptions.gravity) {
+
+    switch (gravity) {
       case 'Center':
         return [0, 0];
       case 'North':
-          return [0, y0 + this.options.textOptions.offsets.y];
+        return [0, y0 + y];
       case 'West':
-        return [x0 + this.options.textOptions.offsets.x, 0];
+        return [x0 + x, 0];
       default:
-        return [ x0 + this.options.textOptions.offsets.x, y0 + this.options.textOptions.offsets.y ];
+        return [ x0 + x, y0 + y ];
     }
   }
 
-  /*
-  * Calculates caption coords
-  * @returns {Array}
-  */
+  /**
+   * Calculates caption coords
+   *
+   * @returns {Array}
+   */
   getCaptionCoords() {
+    const {
+      captionOptions: {
+        gravity,
+        offsets: {
+          x,
+          y,
+        } = {},
+      } = {},
+    } = this.options;
+
     const [ x1, y1 ] = this.getFrameCoords();
-    switch (this.options.captionOptions.gravity) {
+    const [ textWidth, textHeight ] = this.getTextFrameSize();
+
+    switch (gravity) {
       case 'South':
-        return [0, y1 + this.options.captionOptions.offsets.y];
+        return [0, y1 + y];
       default:
-        return [ x1 + this.options.captionOptions.offsets.x, y1 + this.options.captionOptions.offsets.y ];
+        return [ x1 + x, y1 + textHeight + y ];
     }
   }
 
-  /*
-  * Calculates text and caption divider coords
-  * @returns {Array}
-  */
+  /**
+   * Calculates text and caption divider coords
+   *
+   * @returns {Array}
+   */
   getTextCaptionDividerCoords() {
     const [ x0, y0, x1, y1 ] = this.getFrameCoords();
     const [ captionWidth, captionHeight ] = this.getCaptionFrameSize();
