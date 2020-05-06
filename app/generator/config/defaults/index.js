@@ -70,5 +70,5 @@ export const defaults = {
   },
   effects: [],
   monochrome: false,
-  callback: null,
+  cb: null,
 };
