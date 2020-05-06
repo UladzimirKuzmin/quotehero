@@ -26,7 +26,7 @@ const initializeGenerator = (original, index=0, src='./images', dist='./dist') =
 
   return new Generator({
     ...(
-      Array,isArray(options.data)
+      Array.isArray(options.data)
         ? options.data[index]
         : options.data
     ),
