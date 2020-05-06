@@ -4,7 +4,7 @@ import { argv } from 'yargs';
 import Generator from './app/Generator';
 import { readOptions, getImages } from './utils'
 
-const { filename, src, dist, opts } = argv;
+const { filename, src, dist, optsFileName, text, caption } = argv;
 
 /**
  * Initializes generator
@@ -17,7 +17,7 @@ const { filename, src, dist, opts } = argv;
  * @returns {Object}
  */
 const initializeGenerator = (original, index=0, src='./images', dist='./dist') => {
-  const options = readOptions(opts);
+  const options = readOptions(optsFileName);
 
   if (!options) {
     return console.log('Please, provide options.json file');
@@ -27,7 +27,15 @@ const initializeGenerator = (original, index=0, src='./images', dist='./dist') =
     ...(
       Array.isArray(options.data)
         ? options.data[index]
-        : options.data
+        : {
+          ...options.data, 
+          ...(text && {
+            textOptions: { ...options.data.textOptions, text },
+          }),
+          ...(caption && {
+            captionOptions: { ...options.data.captionOptions, caption },
+          }),
+        }
     ),
     id: `generator_${index + 1}`,
     original,
