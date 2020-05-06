@@ -30,7 +30,7 @@ To generate any picture you need to pass options.json file and original image fi
 
 Default folder with images is './images'. Default destionation folder is './dist'.
 ```
-yarn start --filename=image.jpg --src=./otherFolderWithImages --dist=buildFoder --opts=options
+yarn start --filename=image.jpg --src=otherFolderWithImages --dist=buildFoder --opts=options
 ```
 
 To generate a bunch of files in one run:
