@@ -53,19 +53,25 @@ export default class Generator {
     }
 
     if (this.options.drawText) {
-      // this.drawText(this.getFittedText(this.options.textOptions.text));
-      this.drawText(addLineBreak(this.options.textOptions.text, {
-        fontSize: textFontSize,
-        fontFamily: textFontFamily,
-      }));
+      const text = this.options.textOptions.breakLine
+        ? addLineBreak(this.options.textOptions.text, {
+          fontSize: textFontSize,
+          fontFamily: textFontFamily,
+        })
+        : this.getFittedText(this.options.textOptions.text);
+
+      this.drawText(text);
     }
 
     if (this.options.drawCaption) {
-      // this.drawCaption(this.options.captionOptions.caption);
-      this.drawCaption(addLineBreak(this.options.captionOptions.caption, {
-        fontSize: captionFontSize,
-        fontFamily: captionFontFamily,
-      }));
+      const caption = this.options.captionOptions.breakLine
+        ? addLineBreak(this.options.captionOptions.caption, {
+          fontSize: captionFontSize,
+          fontFamily: captionFontFamily,
+        })
+        : this.options.captionOptions.caption;
+      
+      this.drawCaption(caption);
     }
 
     if (this.options.drawDivider) {

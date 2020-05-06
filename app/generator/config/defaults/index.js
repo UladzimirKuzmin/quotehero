@@ -40,6 +40,7 @@ export const defaults = {
       color: 'transparent',
       size: 0,
     },
+    breakLine: false,
   },
   drawCaption: false,
   captionOptions: {
@@ -59,6 +60,7 @@ export const defaults = {
       color: 'transparent',
       size: 0,
     },
+    breakLine: false,
   },
   drawDivider: false,
   dividerOptions: {
