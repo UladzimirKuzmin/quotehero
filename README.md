@@ -26,8 +26,12 @@ To generate one file:
 ```
 yarn start --filename=image.jpg --opts=options
 ```
-
 To generate any picture you need to pass options.json file and original image filename with exstension. See options.json.example as a reference.
+
+Default folder with images is './images'. Default destionation folder is './dist'.
+```
+yarn start --filename=image.jpg --src=./otherFolderWithImages --dist=buildFoder --opts=options
+```
 
 To generate a bunch of files in one run:
 
