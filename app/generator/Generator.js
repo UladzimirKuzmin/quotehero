@@ -441,16 +441,29 @@ export default class Generator {
    */
   getTextCoords() {
     const {
+      resizeOptions: {
+        height,
+      } = {},
       textOptions: {
         gravity,
+        deltaY,
         offsets: {
           x,
           y,
         } = {},
       } = {},
+      captionOptions: {
+        offsets: {
+          y: captionY,
+        } = {},
+      } = {},
     } = this.options;
 
     const [ x0, y0 ] = this.getFrameCoords();
+    const [ textWidth, textHeight ] = this.getTextFrameSize();
+    const [ captionWidth, captionHeight ] = this.getCaptionFrameSize();
+
+    const calculatedY = (height - (textHeight + captionHeight + (captionY - y))) / 2 + deltaY;
 
     switch (gravity) {
       case 'Center':
@@ -460,7 +473,7 @@ export default class Generator {
       case 'West':
         return [x0 + x, 0];
       default:
-        return [ x0 + x, y0 + y ];
+        return [ x0 + x, y0 + calculatedY ];
     }
   }
 
@@ -471,23 +484,36 @@ export default class Generator {
    */
   getCaptionCoords() {
     const {
+      resizeOptions: {
+        height,
+      } = {},
       captionOptions: {
         gravity,
+        deltaY,
         offsets: {
           x,
           y,
+        } = {},
+      } = {},
+      textOptions: {
+        offsets: {
+          y: textY,
         } = {},
       } = {},
     } = this.options;
 
     const [ x1, y1 ] = this.getFrameCoords();
     const [ textWidth, textHeight ] = this.getTextFrameSize();
+    const [ captionWidth, captionHeight ] = this.getCaptionFrameSize();
+
+    const textBottomOffset = y - textY;
+    const calculatedTextY = (height - (textHeight + captionHeight + (y - textY))) / 2 + deltaY;
 
     switch (gravity) {
       case 'South':
         return [0, y1 + y];
       default:
-        return [ x1 + x, y1 + textHeight + y ];
+        return [ x1 + x, y1 + textHeight + calculatedTextY + textBottomOffset ];
     }
   }
 
