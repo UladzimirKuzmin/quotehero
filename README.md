@@ -2,8 +2,8 @@
 
 Picture quotes generator
 
-## Install
-Clone the repo and install the dependencies: 
+## Installation
+Clone the repo and install the dependencies. Due to generator uses node-canvas library and to make all work fine then probably some additional instruments will be required. See https://github.com/Automattic/node-canvas#compiling
 
 Using npm:
 
