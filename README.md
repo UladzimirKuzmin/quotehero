@@ -3,6 +3,7 @@
 Picture quotes generator
 
 ## Install
+Clone the repo and install the dependencies: 
 
 Using npm:
 
