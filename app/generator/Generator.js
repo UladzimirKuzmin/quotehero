@@ -101,10 +101,10 @@ export default class Generator {
   }
 
   /**
-   * @returns GM instance of original image
+   * @returns GM instance of original image filename
    */
   getImage() {
-    return gm(`${this.options.src}/${this.options.original}`);
+    return gm(`${this.options.src}/${this.options.filename}`);
   }
 
   /**

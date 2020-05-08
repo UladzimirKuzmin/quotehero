@@ -3,7 +3,7 @@ import { DEFAULT_FONT_SIZE } from './constants';
 export const defaults = {
   src: './images',
   dist: './dist',
-  original: '',
+  filename: '',
   result: '',
   resize: true,
   crop: true,

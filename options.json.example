@@ -2,7 +2,7 @@
    "data": {
       "src": "./images",
       "dist": "./dist",
-      "original": "",
+      "filename": "",
       "result": "",
       "resize": true,
       "crop": true,
