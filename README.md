@@ -3,7 +3,7 @@
 Picture quotes generator
 
 ## Installation
-Clone the repo and install the dependencies. Due to generator uses node-canvas library and to make all work fine some additional instruments is required. See https://github.com/Automattic/node-canvas#compiling
+Clone the repo and install the dependencies. Due to generator uses node-canvas library and to make all work fine some additional instruments are required. Node version no. higher that 10 and also see https://github.com/Automattic/node-canvas#compiling
 
 Using npm:
 
