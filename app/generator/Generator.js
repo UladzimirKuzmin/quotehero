@@ -22,13 +22,13 @@ export default class Generator {
       textOptions: {
         size: textFontSize,
         font: {
-          textFontFamily,
+          family: textFontFamily,
         } = {}
       } = {},
       captionOptions: {
         size: captionFontSize,
         font: {
-          captionFontFamily,
+          family: captionFontFamily,
         } = {}
       } = {},
     } = this.options;
