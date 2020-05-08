@@ -24,7 +24,7 @@ yarn
 To generate one file:
 
 ```
-yarn start --filename=image.jpg --text=Some text for quote --caption=quote caption
+yarn start --filename=image.jpg --text=text --caption=caption
 ```
 To generate any picture you need to pass options.json file and original image filename with exstension. See options.json.example as a reference.
 
@@ -46,7 +46,7 @@ Let's consider generating of one picture:
 ```
 import { generateQuote } from './cli';
 
-generateQuote('image.jpg', 'Some text for quote', 'quote caption');
+generateQuote('image.jpg', 'Some text for quote', 'Quote caption');
 ```
 Where first argument is a filename of the background image, second is the main text and the third is caption if it's needed.
 Default folder with images is './images'. Default destination folder is './dist'. Default options filename is 'options'.
