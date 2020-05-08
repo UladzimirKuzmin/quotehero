@@ -4,7 +4,14 @@ import { argv } from 'yargs';
 import Generator from './app/Generator';
 import { readOptions, getImages } from './utils'
 
-const { filename, src, dist, opts, text, caption } = argv;
+const {
+  filename,
+  text,
+  caption,
+  src,
+  dist,
+  opts,
+} = argv;
 
 /**
  * Initializes generator
@@ -16,13 +23,15 @@ const { filename, src, dist, opts, text, caption } = argv;
  *
  * @returns {Object}
  */
-const initializeGenerator = (
+const initializeGenerator = ({
   original,
+  text,
+  caption,
   src='./images',
   dist='./dist',
   optsFileName='options',
   index=0
-) => {
+}) => {
   const options = readOptions(optsFileName);
 
   if (!options) {
@@ -59,13 +68,15 @@ const initializeGenerator = (
  * Generates one quote image
  *
  * @param {string} filename
+ * @param {string} text
+ * @param {string} caption
  * @param {string} src
  * @param {string} dist
  * @param {string} optsFileName
  */
-export const generateQuote = (filename, src, dist, optsFileName) => {
+export const generateQuote = (filename, text, caption, src, dist, optsFileName) => {
   try {
-    const generator = initializeGenerator(filename, src, dist, optsFileName) || {};
+    const generator = initializeGenerator({ filename, text, caption, src, dist, optsFileName }) || {};
     typeof generator.generate === 'function' && generator.generate();
   } catch(err) {
     console.log(err);
@@ -83,7 +94,7 @@ export const generateQuotes = async (src, dist, optsFileName) => {
   try {
     const images = await getImages(src);
     images.forEach((image, index) => {
-      const generator = initializeGenerator(image, src, dist, optsFileName, index) || {};
+      const generator = initializeGenerator({ image, src, dist, optsFileName, index }) || {};
       typeof generator.generate === 'function' && generator.generate();
     });
   } catch(err) {
@@ -93,7 +104,7 @@ export const generateQuotes = async (src, dist, optsFileName) => {
 
 export const start = () =>
   filename
-    ? generateQuote(filename, src, dist, opts)
+    ? generateQuote(filename, text, caption, src, dist, opts)
     : generateQuotes(src, dist, opts);
 
 start();
